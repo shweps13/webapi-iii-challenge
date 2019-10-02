@@ -38,6 +38,21 @@ function validateUser(req, res, next) {
           }
 }
 
+function validatePost(req, res, next) {
+    const postInfo = req.body;
+
+        if (!postInfo) {
+            res.status(400).json({ message: "missing post data" })
+          } else if (!postInfo.text) {
+            res.status(400).json({ message: "missing required text field" })
+          } else if (!postInfo.user_id) {
+            res.status(400).json({ message: "missing required user_id field" })
+          } else {
+            next();
+          }
+}
+
+
 server.use(logger);
 server.use(helmet());
 server.use(express.json());
@@ -156,7 +171,7 @@ server.get('/api/posts/:id', (req, res) => {
 
 });
 
-server.post('/api/posts/:id', (req, res) => {
+server.post('/api/posts/:id', validatePost, (req, res) => {
     const postInfo = req.body;
 
     postDB.insert(postInfo)
