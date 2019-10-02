@@ -13,6 +13,19 @@ function logger(req, res, next) {
     next();
 }
 
+function validateUserId(req, res, next) {
+    const id = req.params.id;
+
+    userDB.getById(id)
+    .then(response => {
+        if (!response) {
+            res.status(400).json({ message: "invalid user id" })
+          } else {
+            next();
+          }
+    })
+}
+
 server.use(logger);
 server.use(helmet());
 server.use(express.json());
@@ -38,7 +51,7 @@ server.get('/api/users', (req, res) => {
 
 });
 
-server.get('/api/users/:id', (req, res) => {
+server.get('/api/users/:id', validateUserId, (req, res) => {
     const id = req.params.id;
 
     userDB.getById(id)
@@ -46,12 +59,12 @@ server.get('/api/users/:id', (req, res) => {
         res.json(posts);
     })
     .catch(error => {
-        res.status(500).json({ error: "The user information could not be retrieved." })
+        res.status(500).json({ error: error })
     });
 
 });
 
-server.get('/api/users/:id/posts', (req, res) => {
+server.get('/api/users/:id/posts', validateUserId, (req, res) => {
     const id = req.params.id;
 
     userDB.getUserPosts(id)
@@ -76,7 +89,7 @@ server.post('/api/users/', (req, res) => {
     });
 });
 
-server.delete('/api/users/:id', (req, res) => {
+server.delete('/api/users/:id', validateUserId, (req, res) => {
     const id = req.params.id;
 
     userDB.remove(id)
@@ -89,7 +102,7 @@ server.delete('/api/users/:id', (req, res) => {
 
 });
 
-server.put('/api/users/:id', (req, res) => {
+server.put('/api/users/:id', validateUserId, (req, res) => {
     const id = req.params.id;
     const update = req.body;
 
