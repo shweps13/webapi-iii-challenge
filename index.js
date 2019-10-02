@@ -37,17 +37,47 @@ server.get('/api/users/:id', (req, res) => {
         res.json(posts);
     })
     .catch(error => {
-        res.status(500).json({ error: "The users information could not be retrieved." })
+        res.status(500).json({ error: "The user information could not be retrieved." })
     });
 
 });
 
-server.delete('/:id', (req, res) => {
+server.post('/api/users/', (req, res) => {
+    const userInfo = req.body;
+
+    userDB.insert(userInfo)
+    .then(posts => {
+        res.json(posts);
+    })
+    .catch(error => {
+        res.status(500).json({ error: "The user information could not be added." })
+    });
+});
+
+server.delete('/api/users/:id', (req, res) => {
+    const id = req.params.id;
+
+    userDB.remove(id)
+    .then(posts => {
+        res.json(posts);
+    })
+    .catch(error => {
+        res.status(500).json({ error: "The user information could not be deleted." })
+    });
 
 });
 
-server.put('/:id', (req, res) => {
+server.put('/api/users/:id', (req, res) => {
+    const id = req.params.id;
+    const update = req.body;
 
+    userDB.update(id, update)
+    .then(posts => {
+        res.json(posts);
+    })
+    .catch(error => {
+        res.status(500).json({ error: "The user information could not be updated." })
+    });
 });
 // === End of CRUD operations ===
 
