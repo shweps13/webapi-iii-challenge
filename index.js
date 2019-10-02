@@ -26,6 +26,18 @@ function validateUserId(req, res, next) {
     })
 }
 
+function validateUser(req, res, next) {
+    const userInfo = req.body;
+
+        if (!userInfo) {
+            res.status(400).json({ message: "missing user data" })
+          } else if (!userInfo.name) {
+            res.status(400).json({ message: "missing required name field" })
+          } else {
+            next();
+          }
+}
+
 server.use(logger);
 server.use(helmet());
 server.use(express.json());
@@ -64,7 +76,7 @@ server.get('/api/users/:id', validateUserId, (req, res) => {
 
 });
 
-server.get('/api/users/:id/posts', validateUserId, (req, res) => {
+server.get('/api/users/:id/posts', validateUserId,  (req, res) => {
     const id = req.params.id;
 
     userDB.getUserPosts(id)
@@ -77,7 +89,7 @@ server.get('/api/users/:id/posts', validateUserId, (req, res) => {
 
 });
 
-server.post('/api/users/', (req, res) => {
+server.post('/api/users/', validateUser, (req, res) => {
     const userInfo = req.body;
 
     userDB.insert(userInfo)
