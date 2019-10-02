@@ -21,6 +21,7 @@ function validateUserId(req, res, next) {
         if (!response) {
             res.status(400).json({ message: "invalid user id" })
           } else {
+            req.user = response;
             next();
           }
     })
