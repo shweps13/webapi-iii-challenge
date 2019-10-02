@@ -5,8 +5,17 @@ const userDB = require('./users/userDb.js');
 
 const server = express();
 
-server.use(express.json());
 
+
+function logger(req, res, next) {
+    console.log(`[${new Date().toISOString()}] Was user method "${req.method}" to address "${req.path}"`);
+  
+    next();
+}
+
+server.use(logger);
+server.use(helmet());
+server.use(express.json());
 
 // === CRUD operations here ========================
 server.get('/', (req, res) => {
