@@ -42,6 +42,19 @@ server.get('/api/users/:id', (req, res) => {
 
 });
 
+server.get('/api/users/:id/posts', (req, res) => {
+    const id = req.params.id;
+
+    userDB.getUserPosts(id)
+    .then(posts => {
+        res.json(posts);
+    })
+    .catch(error => {
+        res.status(500).json({ error: "The user information could not be retrieved." })
+    });
+
+});
+
 server.post('/api/users/', (req, res) => {
     const userInfo = req.body;
 
